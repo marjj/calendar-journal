@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { ChevronLeftIcon, ChevronRightIcon } from '@primer/octicons-react'
 
 function Calendar () {
   const [current, setCurrent] = useState(new Date());
@@ -24,22 +25,29 @@ function Calendar () {
   }, [current])
 
   return <div className="grid grid-rows-[auto_1fr] gap-4">
-    <div className="">
-      <h2 className="text-xl font-bold">{months[current.getMonth()]}</h2>
-      {/* <button onClick={() => setCurrent(new Date(current.getFullYear(), current.getMonth() - 1))}> prev </button> */}
-      {/* <button onClick={() => setCurrent(new Date(current.getFullYear(), current.getMonth() + 1))}> next </button> */}
+    <div className="flex items-center justify-between">
+      <div className="w-1/2 text-xl font-bold">
+        {months[current.getMonth()]}
+      </div>
+      <button onClick={() => setCurrent(new Date(current.getFullYear(), current.getMonth() - 1))}> <ChevronLeftIcon/> </button>
+      <button onClick={() => setCurrent(new Date(current.getFullYear(), current.getMonth() + 1))}> <ChevronRightIcon/> </button>
     </div>
     <div className="grid grid-rows-[auto_1fr]">
-      <div className="h-10 md:h-20 grid grid-cols-7 border border-neutral-200 bg-neutral-200 dark:bg-neutral-700 dark:border-neutral-700">
+      <div className="h-auto py-2 grid grid-cols-7 border border-neutral-200 bg-neutral-200 dark:bg-neutral-700 dark:border-neutral-700">
         { weekDays.map(d => <div key={d} className="font-bold flex items-center justify-center">{d}</div>) }
       </div>
       <div className="h-auto grid grid-cols-7 border border-neutral-200 dark:border-neutral-700">
         {
-          dates.map(((d, i) => (
-            <div key={`${d.key}`} className={`flex items-center justify-center cursor-pointer hover:bg-blue-200 ${d.day === 0 ? 'text-red-400' : ''} ${d.month !== (current.getMonth() + 1) ? 'text-neutral-400 dark:text-neutral-500' : ''} ${d.date?.toDateString() === new Date().toDateString() ? 'bg-blue-500 text-white hover:bg-blue-600' : ''} h-full`}>
-              {d.date.getDate()}
-            </div>
-          )))
+          dates.map((d, i) => {
+            const activeClass = d.date?.toDateString() === new Date().toDateString() ? 'bg-neutral-200 dark:bg-neutral-700 dark:text-white dark:hover:bg-neutral-600' : ''
+            const sundayClass = d.day === 0 ? 'text-red-400' : ''
+            const inactiveMonthClass = d.month !== (current.getMonth() + 1) ? 'text-neutral-400 dark:text-neutral-500' : ''
+            return (
+              <div key={`${d.key}`} className={`flex items-center justify-center cursor-pointer hover:bg-neutral-400 hover:text-gray-100 dark:hover:bg-neutral-100 dark:hover:text-gray-500 ${sundayClass} ${inactiveMonthClass} ${activeClass} h-full`}>
+                {d.date.getDate()}
+              </div>
+            )
+          })
         }
       </div>
     </div>
