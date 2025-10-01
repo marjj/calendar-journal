@@ -1,18 +1,17 @@
 import { useEffect, useState } from 'react';
-import { ChevronLeftIcon, ChevronRightIcon } from '@primer/octicons-react'
+import { ChevronLeftIcon, ChevronRightIcon, NorthStarIcon } from '@primer/octicons-react'
 
-function Calendar () {
-  const [current, setCurrent] = useState(new Date());
+function Calendar ({ data }) {
+  const d = new Date()
+  const [current, setCurrent] = useState(new Date(d.getFullYear(), d.getMonth()));
   const [dates, setDates] = useState([])
   const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
   const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
   useEffect(() => {
-  }, []);
-
-  useEffect(() => {
     const _calendar = new Array(35).fill({}).map((_, i) => {
-      const date = new Date(current.getFullYear(), current.getMonth(), i - (current.getDay()) + 1)
+      const dayOffset = i - (current.getDay()) + 1
+      const date = new Date(current.getFullYear(), current.getMonth(), dayOffset)
       return {
         date,
         day: date.getDay(),
@@ -20,7 +19,6 @@ function Calendar () {
         key: `${date.getMonth()+1}-${date.getDate()}-${date.getFullYear()}`,
       }
     })
-
     setDates(_calendar)
   }, [current])
 
@@ -43,8 +41,12 @@ function Calendar () {
             const sundayClass = d.day === 0 ? 'text-red-400' : ''
             const inactiveMonthClass = d.month !== (current.getMonth() + 1) ? 'text-neutral-400 dark:text-neutral-500' : ''
             return (
-              <div key={`${d.key}`} className={`flex items-center justify-center cursor-pointer hover:bg-neutral-400 hover:text-gray-100 dark:hover:bg-neutral-100 dark:hover:text-gray-500 ${sundayClass} ${inactiveMonthClass} ${activeClass} h-full`}>
+              <div key={`${d.key}`} className={`relative flex items-center justify-center cursor-pointer hover:bg-neutral-400 hover:text-gray-100 dark:hover:bg-neutral-100 dark:hover:text-gray-500 ${sundayClass} ${inactiveMonthClass} ${activeClass} h-full`}>
                 {d.date.getDate()}
+
+                { data.find(n =>
+                  new Date(n.date).toDateString() === d.date.toDateString()
+                ) && <span className="absolute bottom-2 text-cyan-400"> <NorthStarIcon size={12}/> </span> }
               </div>
             )
           })
