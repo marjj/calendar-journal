@@ -4,18 +4,5 @@
 }
 
 body {
-    background: light-dark(#ffffff, #121212);
-    font-family: 'SUSE Mono', sans-serif;
+  font-family: 'SUSE Mono', sans-serif;
 }
-.app-container {
-    display: grid;
-    grid-template-columns: auto auto;
-    gap: 20px;
-    padding: 20px
-}
-
-.card {
-    background: light-dark(#f0f0f0, #1e1e1e);
-    border-radius: 20px;
-    padding: 20px
-};
