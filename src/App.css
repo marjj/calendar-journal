@@ -3,6 +3,10 @@
   color-scheme: light dark; /* Enables both light and dark schemes */
 }
 
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 body {
   font-family: 'SUSE Mono', sans-serif;
 }
