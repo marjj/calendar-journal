@@ -12,7 +12,7 @@ function Card({ title, content, date, callback }) {
           <TrashIcon size={16} onClick={() => { callback('delete') }}/>
         </button>
       </div>
-      <p>{content}</p>
+      <div>{content}</div>
     </div>
   );
 }

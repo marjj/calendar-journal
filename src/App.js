@@ -1,5 +1,5 @@
 import './App.css';
-import { SunIcon, MoonIcon } from '@primer/octicons-react';
+import { SunIcon, MoonIcon, PlusIcon } from '@primer/octicons-react';
 
 import { useEffect, useState } from 'react';
 
@@ -17,6 +17,7 @@ function App() {
   const [showAlert, setShowAlert] = useState(false)
   const [alertMessage, setAlertMessage] = useState('')
   const [showPopup, setShowPopup] = useState(false)
+  const [displayData, setDisplayData] = useState(data)
 
   useEffect(() => {
     const _mode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
@@ -24,6 +25,8 @@ function App() {
     if (_mode) {
       document.documentElement.classList.add('dark')
     }
+    // sort data
+    setDisplayData({ data: data.data.sort((a, b) => new Date(b.date) - new Date(a.date)) })
   }, [])
 
   useEffect(() => {
@@ -61,27 +64,47 @@ function App() {
       </div>
 
       <div className="grid grid-rows-[40%_1fr] md:grid-rows-1 md:grid-cols-[55%_1fr] gap-10 h-3/4 overflow-auto md:overflow-hidden">
+
         <Calendar
           data={data.data.map(d => {
             return { date: d.date}
           })}
-
           callback={(d) => {
-            const _data = data.data.find(_d => new Date(_d.date).toDateString() === d.date.toDateString())
+            const _data = data.data.filter(_d => new Date(_d.date).toDateString() === d.date.toDateString())
             console.log(d, _data)
-            setShowPopup(true)
+            // setShowPopup(true)
+            setDisplayData({ date: d.date, data: _data })
           }}
         />
-        <div className="md:max-h-full md:overflow-y-scroll">
-          <h2 className="text-lg font-bold mb-4">Notes</h2>
-          { data.data.map((d, i) =>
-            <Card key={i} title={d.title} content={d.content} date={d.date} callback={(type) => {
-              if (type === 'delete') {
-                setShowAlert(true)
-                setAlertMessage('Are you sure you want to delete this note?')
+
+        <div className="md:max-h-full md:overflow-y-auto px-4">
+          <div className="header flex justify-between items-center pr-2 mb-4">
+            <span className="text-lg font-bold">Notes</span>
+            <button className="" onClick={() => setShowPopup(true)}><PlusIcon size={12}/></button>
+          </div>
+
+          { !displayData.data.length && <p className="text-sm text-neutral-500 dark:text-neutral-400">No notes for this date. Click on a date with a star to see notes, or click on any date to add a new note.</p> }
+          
+          { displayData.data.map((d, i) =>
+            <Card
+              key={i}
+              title={d.title}
+              content={
+                d.content || d.items?.map(i => <div key={i.time}>
+                  <div className="border-b border-neutral-300 dark:border-neutral-700 mb-2 pb-2">
+                    <span className="font-bold text-[10px]">{i.time}</span>
+                    <p>{i.content}</p>
+                  </div>
+                </div>)
               }
+              date={d.date}
+              callback={(type) => {
+                if (type === 'delete') {
+                  setShowAlert(true)
+                  setAlertMessage('Are you sure you want to delete this note?')
+                }
             }}/>
-           )}
+          )}
         </div>
       </div>
     </div>
