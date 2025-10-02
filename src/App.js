@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import Card from './components/Card';
 import Calendar from './components/Calendar';
 import Alert from './components/Alert'
+import Popup from './components/Popup';
 
 // TODO: data source/handling
 import data from './data'
@@ -15,6 +16,7 @@ function App() {
   const [mode, setMode] = useState('light')
   const [showAlert, setShowAlert] = useState(false)
   const [alertMessage, setAlertMessage] = useState('')
+  const [showPopup, setShowPopup] = useState(false)
 
   useEffect(() => {
     const _mode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
@@ -34,19 +36,42 @@ function App() {
 
   return (
     <div className="bg-white dark:bg-neutral-900 text-neutral-900 dark:text-white h-full p-10">
+      <Popup
+        show={showPopup}
+        callback={(type) => {
+          // type confirm, or close
+          setShowPopup(!showPopup)
+        }}
+        buttons={[
+          { text: 'Add', type: 'confirm'},
+          { text: 'Cancel', type: 'close'}
+        ]}
+      />
+
       <button className="absolute top-4 right-4 z-11" onClick={() => {
         setMode(mode === 'dark' ? 'light' : 'dark')
       }}>
         {mode === 'dark' ? <SunIcon/> : <MoonIcon/>}
       </button>
+
       <Alert message={alertMessage} type="confirmation" show={showAlert} callback={(type) => { setShowAlert(false) }}/>
+
       <div className="text-center text-3xl font-bold py-5 pb-10">
         Journal
       </div>
+
       <div className="grid grid-rows-[40%_1fr] md:grid-rows-1 md:grid-cols-[55%_1fr] gap-10 h-3/4 overflow-auto md:overflow-hidden">
-        <Calendar data={data.data.map(d => {
-          return { date: d.date}
-        })}/>
+        <Calendar
+          data={data.data.map(d => {
+            return { date: d.date}
+          })}
+
+          callback={(d) => {
+            const _data = data.data.find(_d => new Date(_d.date).toDateString() === d.date.toDateString())
+            console.log(d, _data)
+            setShowPopup(true)
+          }}
+        />
         <div className="md:max-h-full md:overflow-y-scroll">
           <h2 className="text-lg font-bold mb-4">Notes</h2>
           { data.data.map((d, i) =>
