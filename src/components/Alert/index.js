@@ -1,13 +1,11 @@
-import './index.css'
-
 import { XIcon } from '@primer/octicons-react'
 
 function Alert({ message, type, show, callback }) {
   if (!show) return null;
 
-  return <div className="absolute top-10 left-0 h-full bg-white dark:bg-neutral-900 bg-opacity-70 dark:bg-opacity-70 w-full z-10 flex items-center justify-center" onClick={() => callback('close')}>
-    <div className={`relative bg-neutral-200 text-neutral-700 dark:bg-neutral-800 dark:text-white transition-all scaleX-0 ${show ? 'animate-[expand_0.2s_ease-in-out_forwards]' : 'scaleX-0'}`}>
-      <div className="animate-[fadeIn_0.1s_ease-in-out_0.2s_forwards] animation-delay-200 opacity-0">
+  return <div className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-40 dark:bg-opacity-60 flex flex-col gap-4" onClick={() => callback('close')}>
+    <div className={`relative bg-white text-neutral-700 dark:bg-neutral-800 dark:text-white transition-all scaleX-0 ${show ? 'animate-[expand_0.2s_ease-in-out_forwards]' : 'scaleX-0'}`}>
+      <div className="animate-[fadeIn_0.1s_ease-in-out_0.2s_forwards] opacity-0">
         <button className="float-right pr-2 pt-2" onClick={() => callback('close')}>
           <XIcon size={10}/>
         </button>
