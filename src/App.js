@@ -26,8 +26,8 @@ function App() {
   const [note, setNote] = useState({
     'title': '',
     'content': '',
-    'date': selectedDate.toLocaleDateString('en-US'),
-    'time': selectedDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+    'date': (selectedDate ?? new Date()).toLocaleDateString('en-US'),
+    'time': (selectedDate ?? new Date()).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
   })
 
   useEffect(() => {
@@ -52,8 +52,8 @@ function App() {
   useEffect(() => {
     setNote({
       ...note,
-      date: selectedDate.toLocaleDateString('en-US'),
-      time: selectedDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+      date: (selectedDate ?? new Date()).toLocaleDateString('en-US'),
+      time: (new Date()).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
     })
 
     dataUpdated()
@@ -64,10 +64,17 @@ function App() {
   }, [displayData])
 
   function dataUpdated () {
+
+    if (!selectedDate) {
+      setDisplayData({
+        data: data.data.sort((a, b) => new Date(b.date) - new Date(a.date))
+      })
+      return
+    }
     setDisplayData({
       data: data.data
         .sort((a, b) => new Date(b.date) - new Date(a.date))
-        .filter(d => new Date(d.date).toDateString() === selectedDate.toDateString())
+        .filter(d => new Date(d.date).toDateString() === selectedDate?.toDateString())
     })
   }
 
@@ -78,6 +85,7 @@ function App() {
         show={showPopup}
         callback={(type) => {
           if (type === 'confirm') {
+            console.log(note, 'before add note')
             data.updateData(note.date, note.title, note.content, note.time)
           }
 
@@ -147,6 +155,7 @@ function App() {
 
       <div className="grid grid-rows-[40%_1fr] md:grid-rows-1 md:grid-cols-[55%_1fr] gap-10 h-3/4 overflow-auto md:overflow-hidden">
         <Calendar
+          active={selectedDate}
           data={data.data.map(d => {
             return { date: d.date}
           })}
@@ -162,9 +171,11 @@ function App() {
             <div>
               <span className="text-lg font-bold mr-2">Notes</span>
               <button className="bg-neutral-200 mr-2 dark:bg-neutral-800 text-xs font-bold uppercase px-2 py-1"
-                onClick={(() => setDisplayData({ data: data.data.sort((a, b) => new Date(b.date) - new Date(a.date)) }))}
+                onClick={(() => setSelectedDate(null) )}
               >All</button>
-              <button className="bg-neutral-200 mr-2 dark:bg-neutral-800 text-xs font-bold uppercase px-2 py-1">Today</button>
+              <button className="bg-neutral-200 mr-2 dark:bg-neutral-800 text-xs font-bold uppercase px-2 py-1"
+                onClick={(() => setSelectedDate(new Date()) )}
+              >Today</button>
             </div>
             <button className="" onClick={() => setShowPopup(true)}><PlusIcon size={12}/></button>
           </div>
