@@ -1,7 +1,5 @@
 import { TrashIcon } from '@primer/octicons-react'
 
-import Alert from './../Alert'
-
 function Card({ title, content, date, callback }) {
   return (
     <div className="max-h-max mb-4 text-sm card bg-neutral-200 dark:bg-neutral-800 p-4">
